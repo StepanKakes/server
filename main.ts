@@ -1,12 +1,27 @@
 //  hlasovani: List[string] = []
 let hlasovani : any[] = []
+let key = false
+input.onButtonPressed(Button.B, function on_button_pressed_b() {
+    let key: boolean;
+    if (key == true) {
+        key = false
+    } else {
+        key = true
+    }
+    
+})
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     radio.sendValue("A", control.deviceSerialNumber())
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
-    let values = [name, value]
-    zapocteni(values)
-    console.logValue("hlasovani", hlasovani[0])
+    let values: string[];
+    
+    if (key == true) {
+        values = [name, value]
+        zapocteni(values)
+        console.logValue("hlasovani", hlasovani[0])
+    }
+    
 })
 function zapocteni(values: any) {
     let x: number;
