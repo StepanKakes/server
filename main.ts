@@ -1,9 +1,9 @@
 // server příjmá všchny hlasy se jménem "hlas"
-// přijaté čísla čísla value převede na string a uloží
+// přijaté čísla čísla value převede na písmeno a uloží
 // po zapnutí je hlasování zablokované a po povolení server odesílá stále zprávu aby mohla hlasovat i později připojená zařízení
 // ---ovládání---
 // tláčítko A vypíše hlasy do konzole
-// tlačítko B mění mezi povolení a zablokování hlasování
+// tlačítko B mění mezi povolením a zablokováním hlasování
 // tlačítko logo vynuluje hlasy
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
