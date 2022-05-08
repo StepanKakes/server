@@ -19,6 +19,8 @@ basic.show_icon(IconNames.NO)
 
 def on_logo_event_pressed():
     hlasovani.pop()
+    basic.clear_screen()
+    basic.show_number(0)
 input.on_logo_event(TouchButtonEvent.PRESSED, on_logo_event_pressed)
 
 def on_button_pressed_a():

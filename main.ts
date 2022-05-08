@@ -20,6 +20,8 @@ let value = 65
 basic.showIcon(IconNames.No)
 input.onLogoEvent(TouchButtonEvent.Pressed, function on_logo_event_pressed() {
     _py.py_array_pop(hlasovani)
+    basic.clearScreen()
+    basic.showNumber(0)
 })
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     soucet()
