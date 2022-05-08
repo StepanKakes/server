@@ -1,108 +1,68 @@
-//  hlasovani: List[string] = []
-let A = 0
-let B = 0
-let C = 0
-let D = 0
+// server příjmá všchny hlasy se jménem "hlas"
+// přijaté čísla čísla value převede na string a uloží
+// po zapnutí je hlasování zablokované a po povolení server odesílá stále zprávu aby mohla hlasovat i později připojená zařízení
+// ---ovládání---
+// tláčítko A vypíše hlasy do konzole
+// tlačítko B mění mezi povolení a zablokování hlasování
+// tlačítko logo vynuluje hlasy
+radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 let hlasovani = [ {
     "sn" : 125638,
     "value" : "D",
 }
 ]
-// hlasovani.pop()
-let key = true
-let serial_num = 2
+_py.py_array_pop(hlasovani)
+let key = false
+let key2 = true
+let serial_num = 0
 let value = 65
-pins.touchSetMode(TouchTarget.P0, TouchTargetMode.Capacitive)
-function soucet() {
-    
-    let list = []
-    for (let x of hlasovani) {
-        list.push(x["value"])
-    }
-    A = _py.py_array_count(list, "A")
-    B = _py.py_array_count(list, "B")
-    C = _py.py_array_count(list, "C")
-    D = _py.py_array_count(list, "D")
-    let odpovedi = {
-        "A" : A,
-        "B" : B,
-        "C" : C,
-        "D" : D,
-    }
-    
-    console.log(odpovedi)
-}
-
+basic.showIcon(IconNames.No)
 input.onLogoEvent(TouchButtonEvent.Pressed, function on_logo_event_pressed() {
-    radio.sendValue("hlas", value)
+    _py.py_array_pop(hlasovani)
 })
-input.onPinPressed(TouchPin.P0, function on_pin_pressed_p0() {
-    
+input.onButtonPressed(Button.A, function on_button_pressed_a() {
     soucet()
 })
 input.onButtonPressed(Button.B, function on_button_pressed_b() {
     
-    if (key == true) {
-        key = false
-        radio.sendNumber(0)
-    } else {
+    if (key2 != false) {
         key = true
-        radio.sendNumber(1)
-    }
-    
-})
-input.onButtonPressed(Button.A, function on_button_pressed_a() {
-    
-    console.log(value)
-    if (value == 68) {
-        value = 65
-    } else {
-        value += 1
-    }
-    
-    basic.clearScreen()
-    basic.showString(String.fromCharCode(value))
-})
-radio.onReceivedNumber(function on_received_number(receivedNumber: number) {
-    let key: boolean;
-    
-    if (receivedNumber == 1) {
-        key == true
-        basic.clearScreen()
         basic.showIcon(IconNames.Yes)
-    } else if (receivedNumber == 0) {
-        key = false
-        basic.clearScreen()
+    } else {
+        key2 = true
         basic.showIcon(IconNames.No)
     }
     
-    if (receivedNumber == control.deviceSerialNumber()) {
-        console.log("nvm")
-        basic.clearScreen()
-        basic.showIcon(IconNames.Heart)
+    while (key == true) {
+        console.log("sending")
+        radio.sendNumber(1)
+        if (input.buttonIsPressed(Button.B)) {
+            key = false
+            key2 = false
+            console.log(key)
+            radio.sendNumber(0)
+        }
+        
     }
-    
-    console.log(control.deviceSerialNumber())
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
-    let key: boolean;
-    console.log(name)
+    let break_key: boolean;
     
-    if (name == "hlas") {
+    if (name == "hlas" && key == true) {
         serial_num = radio.receivedPacket(RadioPacketProperty.SerialNumber)
-        key = true
+        break_key = true
         radio.sendNumber(serial_num)
-        console.logValue("serial_num", serial_num)
+        // console.log_value("serial_num", serial_num)
         for (let x of hlasovani) {
             if (x["sn"] == serial_num) {
                 x["value"] = String.fromCharCode(value)
-                key = false
+                break_key = false
                 break
             }
             
         }
-        if (key == true) {
+        if (break_key == true) {
             hlasovani.push( {
                 "sn" : serial_num,
                 "value" : String.fromCharCode(value),
@@ -113,3 +73,23 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     }
     
 })
+function soucet() {
+    
+    let list = []
+    for (let x of hlasovani) {
+        list.push(x["value"])
+    }
+    let A = _py.py_array_count(list, "A")
+    let B = _py.py_array_count(list, "B")
+    let C = _py.py_array_count(list, "C")
+    let D = _py.py_array_count(list, "D")
+    let odpovedi = {
+        "A" : A,
+        "B" : B,
+        "C" : C,
+        "D" : D,
+    }
+    
+    console.log(odpovedi)
+}
+
